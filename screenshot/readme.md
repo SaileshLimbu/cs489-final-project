@@ -33,3 +33,6 @@ The class diagram represents the structure of the backend system.
 The Entity-Relationship diagram represents the database schema.
 
 ![ER Diagram](https://github.com/SaileshLimbu/cs489-final-project/blob/master/screenshot/erdiagram.png?raw=true "ER Diagram")
+
+## Summary
+The Bug Reporting System will enable users to report bugs, track their status, and add comments. The backend will be built using Spring Boot, with a MySQL database to store user information, bug reports, and comments. The frontend will be an Android application, allowing users to interact with the system effectively. This architecture ensures a clear separation of concerns, making the system maintainable and scalable.
