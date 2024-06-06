@@ -7,10 +7,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class UserResponseDTO {
+public class CommentResponseDTO {
     private Long id;
-    private String username;
-    private String email;
-    private String firstName;
-    private String lastName;
+    private String text;
+    private UserResponseDTO user;
+    private int upVote;
+    private int downVote;
 }

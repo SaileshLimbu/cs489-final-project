@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface UserService {
     Optional<UserResponseDTO> register(UserRequestDTO userRequestDTO);
     Optional<UserResponseDTO> login(String username, String password);
-    Optional<UserResponseDTO> updateUser(UserRequestDTO userRequestDTO);
+    Optional<UserResponseDTO> updateUser(UserRequestDTO userRequestDTO, Long userId);
     void deleteUser(UserRequestDTO userRequestDTO);
     Optional<UserResponseDTO> getUser(Long userId);
 }

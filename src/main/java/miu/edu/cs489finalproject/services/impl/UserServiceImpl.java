@@ -15,12 +15,15 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
-    private ModelMapper mapper;
+    private final ModelMapper mapper;
 
     @Override
     public Optional<UserResponseDTO> register(UserRequestDTO userRequestDTO) {
         User user = mapper.map(userRequestDTO, User.class);
-        return Optional.of(mapper.map(userRepository.save(user), UserResponseDTO.class));
+        System.out.println(user);
+        User savedUser = userRepository.save(user);
+        UserResponseDTO userResponseDTO = mapper.map(savedUser, UserResponseDTO.class);
+        return Optional.of(userResponseDTO);
     }
 
     @Override
@@ -30,7 +33,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<UserResponseDTO> updateUser(UserRequestDTO userRequestDTO) {
+    public Optional<UserResponseDTO> updateUser(UserRequestDTO userRequestDTO, Long userId) {
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isPresent()) {
+            User updatedUser = mapper.map(userRequestDTO, User.class);
+            updatedUser.setId(userId);
+            return Optional.of(mapper.map(userRepository.save(updatedUser), UserResponseDTO.class));
+        }
         return Optional.empty();
     }
 

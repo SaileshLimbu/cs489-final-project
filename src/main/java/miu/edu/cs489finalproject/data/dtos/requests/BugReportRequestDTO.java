@@ -7,10 +7,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class UserRequestDTO {
-    private String username;
-    private String password;
-    private String email;
-    private String firstName;
-    private String lastName;
+public class BugReportRequestDTO {
+    private String title;
+    private String description;
+    private Long reporterId;
+    private String status;
 }

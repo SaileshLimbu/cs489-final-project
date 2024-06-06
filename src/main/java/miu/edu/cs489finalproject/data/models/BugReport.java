@@ -20,7 +20,7 @@ public class BugReport {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User reporter;
-    @OneToMany(mappedBy = "bugReport", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "bugReport", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Comment> comments;
     private String status;
 }

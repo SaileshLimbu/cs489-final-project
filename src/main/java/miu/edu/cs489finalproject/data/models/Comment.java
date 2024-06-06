@@ -20,5 +20,9 @@ public class Comment {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+    @Column(name = "up_vote")
+    private int upVote;
+    @Column(name = "down_vote")
+    private int downVote;
 
 }
