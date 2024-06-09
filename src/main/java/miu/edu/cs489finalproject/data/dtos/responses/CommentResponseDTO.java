@@ -11,6 +11,4 @@ public class CommentResponseDTO {
     private Long id;
     private String text;
     private UserResponseDTO user;
-    private int upVote;
-    private int downVote;
 }

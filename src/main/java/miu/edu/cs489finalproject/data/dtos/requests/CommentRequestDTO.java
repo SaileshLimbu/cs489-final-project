@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @Data
 public class CommentRequestDTO {
     private String text;
-    private int bugReportId;
-    private int userId;
+    private Long bugReportId;
+    private Long userId;
 }
