@@ -1,14 +1,12 @@
-package miu.edu.cs489finalproject.data.dtos.requests;
+package miu.edu.cs489finalproject.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import miu.edu.cs489finalproject.data.models.Role;
 
-@NoArgsConstructor
-@AllArgsConstructor
 @Data
-public class UserRequestDTO {
+@AllArgsConstructor
+public class RegisterRequest {
     private String username;
     private String password;
     private String email;
