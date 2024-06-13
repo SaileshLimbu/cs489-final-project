@@ -29,15 +29,15 @@ public class AuthenticationService {
                 registerRequest.getRole(),
                 registerRequest.isBlocked());
         User savedUser = userRepository.save(user);
-        String token = jwtService.generateToken(user);
+        String token = jwtService.generateToken(savedUser);
         return new AuthenticationResponse(token);
     }
 
     public AuthenticationResponse login(AuthenticationRequest authenticationRequest) {
+        var user = userRepository.findUserByUsername(authenticationRequest.getUsername()).orElseThrow(() -> new UsernameNotFoundException(authenticationRequest.getUsername()));
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword())
         );
-        var user = userRepository.findUserByUsername(authenticationRequest.getUsername()).orElseThrow(() -> new UsernameNotFoundException(authenticationRequest.getUsername()));
         String token = jwtService.generateToken(user);
         return new AuthenticationResponse(token);
     }

@@ -70,7 +70,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public Page<CommentResponseDTO> getAllComments(Long bugReportId, int pageSize, int pageNumber) {
         BugReport bugReport = bugReportRepository.findById(bugReportId).get();
-        PageRequest pageRequest = PageRequest.of(pageSize, pageSize);
+        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
         Page<Comment> comments = commentRepository.findAllByBugReport(bugReport, pageRequest);
         List<CommentResponseDTO> commentResponseDTOList = comments.stream().map(comment -> mapper.map(comment, CommentResponseDTO.class)).collect(Collectors.toList());
         return new PageImpl<>(commentResponseDTOList, pageRequest, commentResponseDTOList.size());

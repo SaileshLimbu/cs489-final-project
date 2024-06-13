@@ -1,6 +1,8 @@
 package miu.edu.cs489finalproject.handlers;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -20,5 +22,11 @@ public class GlobalExceptionHandler {
             errors.put(error.getDefaultMessage(), error.getDefaultMessage());
         });
         return errors;
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<String> handleUserNotFoundException(UsernameNotFoundException ex){
+        return new ResponseEntity<>("Username not found.", HttpStatus.NOT_FOUND);
     }
 }
