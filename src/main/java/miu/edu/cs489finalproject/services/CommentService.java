@@ -11,9 +11,11 @@ public interface CommentService {
 
     Optional<CommentResponseDTO> updateComment(CommentRequestDTO commentRequestDTO, Long id);
 
-    Optional<CommentResponseDTO> deleteComment(Long id);
+    void deleteComment(Long id);
 
     Optional<CommentResponseDTO> getComment(Long id);
+
+    Optional<CommentResponseDTO> getCommentByUser(Long commentId, Long userId);
 
     Page<CommentResponseDTO> getAllComments(Long bugReportId, int pageSize, int pageNumber);
 

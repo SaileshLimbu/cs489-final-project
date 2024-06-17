@@ -2,6 +2,8 @@ package miu.edu.cs489finalproject.auth;
 
 
 import lombok.RequiredArgsConstructor;
+import miu.edu.cs489finalproject.data.models.ResponseWrapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,18 +17,24 @@ public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
 
-    @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest registerRequest) {
-        AuthenticationResponse response = authenticationService.register(registerRequest);
-        return ResponseEntity.ok(response);
-    }
-
     @PostMapping("/authenticate")
-    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest authenticationRequest) {
+    public ResponseEntity<ResponseWrapper<AuthenticationResponse>> authenticate(@RequestBody AuthenticationRequest authenticationRequest) {
         AuthenticationResponse response = authenticationService.login(authenticationRequest);
-        if (response == null) {}
-        return ResponseEntity.ok(response);
+        if (response != null) {
+            return ResponseEntity.ok(new ResponseWrapper<>("success", "Authentication successful", response));
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseWrapper<>("error", "Authentication failed", null));
+        }
     }
 
+    @PostMapping("/register")
+    public ResponseEntity<ResponseWrapper<AuthenticationResponse>> register(@RequestBody RegisterRequest registerRequest) {
+        AuthenticationResponse response = authenticationService.register(registerRequest);
+        if (response != null) {
+            return ResponseEntity.ok(new ResponseWrapper<>("success", "User registered successfully", response));
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseWrapper<>("error", "Failed to register user", null));
+        }
+    }
 
 }

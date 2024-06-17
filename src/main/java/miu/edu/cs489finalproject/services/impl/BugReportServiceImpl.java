@@ -3,19 +3,20 @@ package miu.edu.cs489finalproject.services.impl;
 import lombok.RequiredArgsConstructor;
 import miu.edu.cs489finalproject.data.dtos.requests.BugReportRequestDTO;
 import miu.edu.cs489finalproject.data.dtos.responses.BugReportResponseDTO;
-import miu.edu.cs489finalproject.data.dtos.responses.CommentResponseDTO;
 import miu.edu.cs489finalproject.data.models.BugReport;
-import miu.edu.cs489finalproject.data.models.Comment;
 import miu.edu.cs489finalproject.data.models.User;
 import miu.edu.cs489finalproject.repositories.BugReportRepository;
 import miu.edu.cs489finalproject.repositories.UserRepository;
 import miu.edu.cs489finalproject.services.BugReportService;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,11 +25,6 @@ public class BugReportServiceImpl implements BugReportService {
     private final BugReportRepository bugReportRepository;
     private final UserRepository userRepository;
     private final ModelMapper mapper;
-    private final ModelMapper modelMapper;
-
-    public List<CommentResponseDTO> commentToCommentResponseDTO(List<Comment> comments) {
-        return modelMapper.map(comments, new TypeToken<List<CommentResponseDTO>>() {}.getType());
-    }
 
     @Override
     public Optional<BugReportResponseDTO> addBugReport(BugReportRequestDTO bugReportRequestDTO) {
@@ -37,10 +33,8 @@ public class BugReportServiceImpl implements BugReportService {
             BugReport bugReport = mapper.map(bugReportRequestDTO, BugReport.class);
             bugReport.setReporter(user.get());
             BugReport savedBugReport = bugReportRepository.save(bugReport);
-            System.out.println("::::" + savedBugReport);
 
             BugReportResponseDTO bugReportResponseDTO = mapper.map(savedBugReport, BugReportResponseDTO.class);
-//            bugReportResponseDTO.setCommentsDTO(commentToCommentResponseDTO(savedBugReport.getComments()));
 
             return Optional.of(bugReportResponseDTO);
         }
@@ -66,5 +60,18 @@ public class BugReportServiceImpl implements BugReportService {
     @Override
     public Optional<BugReportResponseDTO> getBugReport(Long bugReportId) {
         return Optional.of(mapper.map(bugReportRepository.findById(bugReportId), BugReportResponseDTO.class));
+    }
+
+    @Override
+    public Optional<BugReportResponseDTO> getBugReportByUser(Long bugReportId, Long userId) {
+        return Optional.of(mapper.map(bugReportRepository.findBugReportByBugIdAndUserId(bugReportId, userId), BugReportResponseDTO.class));
+    }
+
+    @Override
+    public Page<BugReportResponseDTO> getAllBugReports(int pageSize, int pageNumber) {
+        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
+        Page<BugReport> bugReports = bugReportRepository.findAll(pageRequest);
+        List<BugReportResponseDTO> commentResponseDTOList = bugReports.stream().map(bugReport -> mapper.map(bugReport, BugReportResponseDTO.class)).collect(Collectors.toList());
+        return new PageImpl<>(commentResponseDTOList, pageRequest, commentResponseDTOList.size());
     }
 }

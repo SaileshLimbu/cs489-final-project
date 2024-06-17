@@ -4,8 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
@@ -14,6 +12,5 @@ public class BugReportResponseDTO {
     private String title;
     private String description;
     private UserResponseDTO reporterDTO;
-    private List<CommentResponseDTO> commentsDTO;
     private String status;
 }

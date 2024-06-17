@@ -3,6 +3,7 @@ package miu.edu.cs489finalproject.config;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,10 +21,11 @@ public class JwtService {
     @Value("${jwt.secretKey}")
     private String SECRET;
 
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(UserDetails userDetails, Long userId) {
         return Jwts.builder()
                 .signWith(signInKey())
                 .claim("authorities", populateAuthorities(userDetails.getAuthorities()))
+                .claim("userId", userId)
                 .subject(userDetails.getUsername())
                 .issuer("miu.edu")
                 .issuedAt(new Date())
@@ -46,5 +48,22 @@ public class JwtService {
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
+    }
+
+    public Long extractUserId(HttpServletRequest request) {
+        String token = getTokenFromRequest(request);
+        if (token != null) {
+            Claims claims = getClaimsFromToken(token);
+            return claims.get("userId", Long.class);
+        }
+        return null;
+    }
+
+    private String getTokenFromRequest(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+        return null;
     }
 }

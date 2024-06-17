@@ -1,7 +1,6 @@
 package miu.edu.cs489finalproject.services.impl;
 
 import lombok.RequiredArgsConstructor;
-import miu.edu.cs489finalproject.data.dtos.requests.BugReportRequestDTO;
 import miu.edu.cs489finalproject.data.dtos.requests.CommentRequestDTO;
 import miu.edu.cs489finalproject.data.dtos.responses.CommentResponseDTO;
 import miu.edu.cs489finalproject.data.models.BugReport;
@@ -12,7 +11,6 @@ import miu.edu.cs489finalproject.repositories.CommentRepository;
 import miu.edu.cs489finalproject.repositories.UserRepository;
 import miu.edu.cs489finalproject.services.CommentService;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -53,18 +51,21 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Optional<CommentResponseDTO> deleteComment(Long id) {
+    public void deleteComment(Long id) {
         Optional<Comment> commentOptional = commentRepository.findById(id);
         if (commentOptional.isPresent()) {
             commentRepository.deleteById(id);
-            return Optional.of(modelMapper.map(commentOptional, CommentResponseDTO.class));
         }
-        return Optional.empty();
     }
 
     @Override
     public Optional<CommentResponseDTO> getComment(Long id) {
         return Optional.of(mapper.map(commentRepository.findById(id), CommentResponseDTO.class));
+    }
+
+    @Override
+    public Optional<CommentResponseDTO> getCommentByUser(Long commentId, Long userId) {
+        return Optional.of(mapper.map(commentRepository.findCommentByUserId(commentId, userId), CommentResponseDTO.class));
     }
 
     @Override

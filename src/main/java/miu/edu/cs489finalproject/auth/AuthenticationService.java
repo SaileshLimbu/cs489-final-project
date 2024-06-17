@@ -29,7 +29,7 @@ public class AuthenticationService {
                 registerRequest.getRole(),
                 registerRequest.isBlocked());
         User savedUser = userRepository.save(user);
-        String token = jwtService.generateToken(savedUser);
+        String token = jwtService.generateToken(savedUser, savedUser.getId());
         return new AuthenticationResponse(token);
     }
 
@@ -38,7 +38,7 @@ public class AuthenticationService {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword())
         );
-        String token = jwtService.generateToken(user);
+        String token = jwtService.generateToken(user, user.getId());
         return new AuthenticationResponse(token);
     }
 }
