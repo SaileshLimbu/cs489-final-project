@@ -1,5 +1,6 @@
 package miu.edu.cs489finalproject.handlers;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -28,5 +29,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<String> handleUserNotFoundException(UsernameNotFoundException ex){
         return new ResponseEntity<>("Username not found.", HttpStatus.NOT_FOUND);
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(ExpiredJwtException.class)
+    public ResponseEntity<String> expiredJWTException(ExpiredJwtException ex){
+        return new ResponseEntity<>("Jwt Expired.", HttpStatus.NOT_FOUND);
     }
 }

@@ -64,7 +64,8 @@ public class BugReportServiceImpl implements BugReportService {
 
     @Override
     public Optional<BugReportResponseDTO> getBugReportByUser(Long bugReportId, Long userId) {
-        return Optional.of(mapper.map(bugReportRepository.findBugReportByBugIdAndUserId(bugReportId, userId), BugReportResponseDTO.class));
+        Optional<BugReport> bugReport = bugReportRepository.findBugReportByBugIdAndUserId(bugReportId, userId);
+        return bugReport.map(report -> mapper.map(report, BugReportResponseDTO.class));
     }
 
     @Override

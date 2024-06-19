@@ -27,7 +27,6 @@ public class CommentServiceImpl implements CommentService {
     private final UserRepository userRepository;
     private final BugReportRepository bugReportRepository;
     private final ModelMapper mapper;
-    private final ModelMapper modelMapper;
 
     @Override
     public Optional<CommentResponseDTO> addComment(CommentRequestDTO commentRequestDTO) {
@@ -65,7 +64,8 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Optional<CommentResponseDTO> getCommentByUser(Long commentId, Long userId) {
-        return Optional.of(mapper.map(commentRepository.findCommentByUserId(commentId, userId), CommentResponseDTO.class));
+        Optional<Comment> commentOptional = commentRepository.findCommentByUserId(commentId, userId);
+        return commentOptional.map(comment -> mapper.map(comment, CommentResponseDTO.class));
     }
 
     @Override

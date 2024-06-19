@@ -26,7 +26,7 @@ public class SecurityConfiguration {
         return http.csrf(CsrfConfigurer::disable)
                 .authorizeHttpRequests(req ->
                         req.requestMatchers("/api/v1/auth/*").permitAll()
-                                .requestMatchers("/api/v1/comment/**").hasAnyRole(Role.ADMIN.name(), Role.MEMBER.name())
+//                                .requestMatchers("/api/v1/comment/**").hasAnyRole(Role.ADMIN.name(), Role.MEMBER.name())
                                 .anyRequest()
                                 .authenticated())
                 .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
