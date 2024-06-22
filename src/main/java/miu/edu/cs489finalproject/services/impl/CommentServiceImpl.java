@@ -17,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -70,9 +71,10 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Page<CommentResponseDTO> getAllComments(Long bugReportId, int pageSize, int pageNumber) {
-        BugReport bugReport = bugReportRepository.findById(bugReportId).get();
+        Optional<BugReport> bugReport = bugReportRepository.findById(bugReportId);
+        if (bugReport.isEmpty()) throw new NoSuchElementException("Empty bug report");
         PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
-        Page<Comment> comments = commentRepository.findAllByBugReport(bugReport, pageRequest);
+        Page<Comment> comments = commentRepository.findAllByBugReport(bugReport.get(), pageRequest);
         List<CommentResponseDTO> commentResponseDTOList = comments.stream().map(comment -> mapper.map(comment, CommentResponseDTO.class)).collect(Collectors.toList());
         return new PageImpl<>(commentResponseDTOList, pageRequest, commentResponseDTOList.size());
     }

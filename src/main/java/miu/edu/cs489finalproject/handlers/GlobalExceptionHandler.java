@@ -1,6 +1,7 @@
 package miu.edu.cs489finalproject.handlers;
 
 import io.jsonwebtoken.ExpiredJwtException;
+import miu.edu.cs489finalproject.data.models.ResponseWrapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -35,5 +37,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ExpiredJwtException.class)
     public ResponseEntity<String> expiredJWTException(ExpiredJwtException ex){
         return new ResponseEntity<>("Jwt Expired.", HttpStatus.NOT_FOUND);
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(NoSuchElementException.class)
+    public ResponseEntity<ResponseWrapper<String>> handleNoSuchElementException(NoSuchElementException ex){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseWrapper("error", ex.getMessage(), null));
     }
 }

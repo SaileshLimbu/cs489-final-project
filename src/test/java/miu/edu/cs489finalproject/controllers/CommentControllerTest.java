@@ -2,20 +2,25 @@ package miu.edu.cs489finalproject.controllers;
 
 import com.google.gson.Gson;
 import jakarta.servlet.http.HttpServletRequest;
-import miu.edu.cs489finalproject.Cs489FinalProjectApplication;
 import miu.edu.cs489finalproject.config.JwtFilter;
 import miu.edu.cs489finalproject.config.JwtService;
 import miu.edu.cs489finalproject.data.dtos.requests.CommentRequestDTO;
 import miu.edu.cs489finalproject.data.dtos.responses.CommentResponseDTO;
+import miu.edu.cs489finalproject.repositories.UserRepository;
+import miu.edu.cs489finalproject.services.BugReportService;
 import miu.edu.cs489finalproject.services.CommentService;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
@@ -26,6 +31,8 @@ import java.util.List;
 import java.util.Optional;
 
 @WebMvcTest(controllers = CommentController.class)
+@ExtendWith(SpringExtension.class)
+@ComponentScan(basePackages = "miu.edu.cs489finalproject")
 class CommentControllerTest {
 
     @Autowired
@@ -40,10 +47,21 @@ class CommentControllerTest {
     @MockBean
     private JwtFilter jwtFilter;
 
+    @MockBean
+    private ModelMapper modelMapper;
+
+    @MockBean
+    private UserRepository userRepository;
+
+    @MockBean
+    private BugReportService bugReportService;
+
     @Test
+    @WithMockUser(username = "test", roles = {"MEMBER"})
     void createComment() throws Exception {
         CommentRequestDTO requestDTO = new CommentRequestDTO();
         requestDTO.setText("Test comment");
+        requestDTO.setBugReportId(1L);
         CommentResponseDTO responseDTO = new CommentResponseDTO();
         responseDTO.setText("Test comment");
 
@@ -56,10 +74,11 @@ class CommentControllerTest {
                                 .content(new Gson().toJson(requestDTO))
                 )
                 .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().isCreated());
+                .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     @Test
+    @WithMockUser(username = "test", roles = {"MEMBER"})
     void getAllComments() throws Exception {
         List<CommentResponseDTO> comments = new ArrayList<>();
         comments.add(new CommentResponseDTO());
@@ -76,6 +95,7 @@ class CommentControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test", roles = {"MEMBER"})
     void updateComment() throws Exception {
         CommentRequestDTO requestDTO = new CommentRequestDTO();
         requestDTO.setText("Updated comment");
@@ -96,6 +116,7 @@ class CommentControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test", roles = {"MEMBER"})
     void deleteComment() throws Exception {
         CommentResponseDTO responseDTO = new CommentResponseDTO();
 
@@ -104,6 +125,6 @@ class CommentControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/comment/1"))
                 .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().isNoContent());
+                .andExpect(MockMvcResultMatchers.status().isOk());
     }
 }

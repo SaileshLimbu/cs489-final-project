@@ -5,17 +5,19 @@ import jakarta.servlet.http.HttpServletRequest;
 import miu.edu.cs489finalproject.config.JwtService;
 import miu.edu.cs489finalproject.data.dtos.requests.BugReportRequestDTO;
 import miu.edu.cs489finalproject.data.dtos.responses.BugReportResponseDTO;
+import miu.edu.cs489finalproject.repositories.UserRepository;
 import miu.edu.cs489finalproject.services.BugReportService;
+import miu.edu.cs489finalproject.services.CommentService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -41,9 +43,13 @@ class BugReportControllerTest {
     private JwtService jwtService;
 
     @MockBean
-    private ModelMapper modelMapper;
+    private UserRepository userRepository;
+
+    @MockBean
+    private CommentService commentService;
 
     @Test
+    @WithMockUser(username = "test", roles = {"MEMBER"})
     void createBugReport() throws Exception {
         BugReportRequestDTO requestDTO = new BugReportRequestDTO();
         requestDTO.setTitle("Test Bug Report");
@@ -63,6 +69,7 @@ class BugReportControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test", roles = {"MEMBER"})
     void getBugReportById() throws Exception {
         BugReportResponseDTO responseDTO = new BugReportResponseDTO();
         responseDTO.setTitle("Test Bug Report");
@@ -75,6 +82,7 @@ class BugReportControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test", roles = {"MEMBER"})
     void getAllBugReports() throws Exception {
         List<BugReportResponseDTO> bugReports = new ArrayList<>();
         bugReports.add(new BugReportResponseDTO());
@@ -90,6 +98,7 @@ class BugReportControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test", roles = {"MEMBER"})
     void updateBugReportById() throws Exception {
         BugReportRequestDTO requestDTO = new BugReportRequestDTO();
         requestDTO.setTitle("Updated Bug Report");
@@ -110,12 +119,12 @@ class BugReportControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test", roles = {"MEMBER"})
     void deleteBugReportById() throws Exception {
         BugReportResponseDTO responseDTO = new BugReportResponseDTO();
 
         Mockito.when(jwtService.extractUserId(Mockito.any(HttpServletRequest.class))).thenReturn(1L);
         Mockito.when(bugReportService.getBugReportByUser(Mockito.anyLong(), Mockito.anyLong())).thenReturn(Optional.of(responseDTO));
-
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/bug-report/1"))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
